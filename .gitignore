@@ -1,0 +1,13 @@
+# .NET
+bin/
+obj/
+*.user
+.vs/
+# Angular / Node
+node_modules/
+frontend/.angular/
+frontend/dist/
+# Runtime + secrets
+backend/ExpenseReimbursement.API/storage/
+.env
+*.local.json

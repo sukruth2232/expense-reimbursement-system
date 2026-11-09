@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="ExpenseReimbursement.API/ExpenseReimbursement.API.csproj" />
+  <Project Path="ExpenseReimbursement.Core/ExpenseReimbursement.Core.csproj" />
+  <Project Path="ExpenseReimbursement.Infrastructure/ExpenseReimbursement.Infrastructure.csproj" />
+</Solution>
