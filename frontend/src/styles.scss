@@ -1,1 +1,362 @@
-/* You can add global styles to this file, and also import other style files */
+// =============================================================================
+// Global styles for Expenso.
+// Angular Material 3 theme + a small set of shared classes used by all screens
+// (kept here so individual components stay short).
+// =============================================================================
+@use '@angular/material' as mat;
+
+html {
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+
+:root {
+  --ok: #1b7f4b;
+  --ok-bg: #e3f4ea;
+  --warn: #9a5b00;
+  --warn-bg: #fdf0d8;
+  --bad: #b3261e;
+  --bad-bg: #fbe5e3;
+  --neutral: #4a5561;
+  --neutral-bg: #eceff2;
+  --page-bg: #f5f7fa;
+  --line: #e1e5ea;
+}
+
+body {
+  color-scheme: light;
+  margin: 0;
+  height: 100%;
+  background: var(--page-bg);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+}
+
+h1, h2, h3 { margin: 0; }
+
+.muted { color: var(--mat-sys-on-surface-variant); }
+.mono { font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
+.num { text-align: right !important; }
+.spacer { flex: 1 1 auto; }
+.full-width { width: 100%; }
+.pre-line { white-space: pre-line; }
+.error-text { color: var(--bad); margin: 8px 0 0; }
+
+// ---- Shell -------------------------------------------------------------------
+.shell { height: 100vh; }
+
+.shell__nav {
+  width: 248px;
+  border-right: 1px solid var(--line);
+  background: #fff;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 20px 12px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--mat-sys-primary);
+}
+
+.nav-active {
+  background: var(--mat-sys-secondary-container) !important;
+  border-radius: 999px;
+}
+
+.shell__toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+  gap: 8px;
+}
+
+.role-chip {
+  font-size: 12px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--neutral-bg);
+  color: var(--neutral);
+}
+
+.user-button .avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--mat-sys-primary);
+  color: var(--mat-sys-on-primary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.page {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .page { padding: 16px; }
+  .user-name { display: none; }
+}
+
+// ---- Page header ---------------------------------------------------------------
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+
+  h1 { font: var(--mat-sys-headline-small); }
+  p { margin: 4px 0 0; }
+}
+
+.page-header__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+// ---- Login ----------------------------------------------------------------------
+.login {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.login__brand {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px;
+  background: linear-gradient(160deg, #0b57d0, #0842a0);
+  color: #fff;
+
+  h1 { font-size: 40px; margin: 8px 0; }
+  p { max-width: 380px; font-size: 16px; line-height: 1.5; opacity: 0.9; }
+}
+
+.login__logo { font-size: 48px; width: 48px; height: 48px; }
+
+.login__panel {
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #fff;
+}
+
+.login__form {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  h2 { font: var(--mat-sys-headline-small); }
+  > p { margin: 4px 0 16px; }
+}
+
+.login__submit { height: 44px; }
+
+.demo-accounts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+@media (max-width: 800px) {
+  .login { grid-template-columns: 1fr; }
+  .login__brand { padding: 32px 24px; }
+}
+
+// ---- Dashboard cards -----------------------------------------------------------
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.stat {
+  padding: 16px 20px;
+  display: flex !important;
+  flex-direction: column;
+  gap: 4px;
+  border-left: 4px solid var(--neutral) !important;
+  background: #fff !important;
+}
+
+.stat--pending { border-left-color: var(--warn) !important; }
+.stat--approved { border-left-color: var(--ok) !important; }
+.stat--rejected { border-left-color: var(--bad) !important; }
+
+.stat__label { color: var(--mat-sys-on-surface-variant); }
+.stat__value { font-size: 32px; font-weight: 700; line-height: 1.2; }
+.stat__sub { color: var(--mat-sys-on-surface-variant); font-size: 13px; }
+
+mat-card { background: #fff !important; }
+
+// ---- Tables ---------------------------------------------------------------------
+.table-wrap { overflow-x: auto; }
+.expense-table, .table-wrap table { width: 100%; }
+tr.clickable { cursor: pointer; }
+tr.clickable:hover td { background: #f3f6fb; }
+.filter-bar { align-self: flex-start; background: #fff; }
+
+// ---- Status badges -------------------------------------------------------------
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.badge--Draft { background: var(--neutral-bg); color: var(--neutral); }
+.badge--PendingApproval { background: var(--warn-bg); color: var(--warn); }
+.badge--Approved { background: var(--ok-bg); color: var(--ok); }
+.badge--Rejected { background: var(--bad-bg); color: var(--bad); }
+
+// ---- Empty state ---------------------------------------------------------------
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 40px 16px;
+  text-align: center;
+
+  mat-icon { font-size: 40px; width: 40px; height: 40px; color: var(--mat-sys-outline); }
+}
+.empty-state__title { font-weight: 500; margin: 8px 0 0; }
+.empty-state__message { color: var(--mat-sys-on-surface-variant); margin: 0 0 12px; }
+
+// ---- Forms --------------------------------------------------------------------
+.form-layout { display: flex; flex-direction: column; gap: 16px; }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 16px;
+  padding-top: 8px !important;
+}
+.span-2 { grid-column: span 2; }
+
+@media (max-width: 700px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .span-2 { grid-column: auto; }
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+// ---- Details --------------------------------------------------------------------
+.detail-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 16px;
+  align-items: start;
+}
+.detail-side { display: flex; flex-direction: column; gap: 16px; }
+
+@media (max-width: 900px) {
+  .detail-grid { grid-template-columns: 1fr; }
+}
+
+.field-list {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 10px 16px;
+  margin: 8px 0 0;
+
+  dt { color: var(--mat-sys-on-surface-variant); }
+  dd { margin: 0; }
+  .amount { font-size: 18px; font-weight: 700; }
+}
+
+.narrow-card { max-width: 560px; }
+
+.receipt-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+.receipt-row__name {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+
+.receipt-viewer {
+  img { max-width: 100%; display: block; margin: 0 auto; }
+  iframe { width: 100%; height: 70vh; border: 0; }
+}
+
+.callout {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  p { margin: 4px 0 0; }
+}
+.callout--error { background: var(--bad-bg); color: var(--bad); }
+
+.timeline {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+.timeline__item {
+  display: flex;
+  gap: 12px;
+  padding-bottom: 14px;
+}
+.timeline__dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  margin-top: 5px;
+  border-radius: 50%;
+  background: var(--neutral);
+}
+.timeline__dot--ok { background: var(--ok); }
+.timeline__dot--bad { background: var(--bad); }
+.timeline__comment { margin-top: 4px; font-style: italic; }
+
+// ---- Approve / reject buttons -----------------------------------------------------
+.btn-approve { background: var(--ok) !important; color: #fff !important; }
+.btn-reject { color: var(--bad) !important; }
+.btn-reject-solid { background: var(--bad) !important; color: #fff !important; }
+
+// ---- Toasts ---------------------------------------------------------------------
+.toast-success { --mat-snack-bar-container-color: #1b5e20; }
+.toast-error { --mat-snack-bar-container-color: #8c1d18; }

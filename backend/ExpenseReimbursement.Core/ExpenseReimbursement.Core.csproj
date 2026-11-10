@@ -1,5 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
+  <!--
+    Core = the "heart" of the application.
+    It holds entities, enums, DTOs, interfaces and business rules.
+    It has NO dependency on EF Core, ASP.NET Core or a database provider, so the rules
+    can be read and tested without any infrastructure.
+  -->
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

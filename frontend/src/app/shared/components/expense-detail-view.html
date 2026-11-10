@@ -1,0 +1,96 @@
+@let e = expense();
+
+@if (e.status === 'Rejected' && e.rejectionReason) {
+  <div class="callout callout--error">
+    <mat-icon>error_outline</mat-icon>
+    <div>
+      <strong>Rejected by {{ e.assignedManagerName }}</strong>
+      <p>{{ e.rejectionReason }}</p>
+    </div>
+  </div>
+}
+
+<div class="detail-grid">
+  <mat-card appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>{{ e.title }}</mat-card-title>
+      <mat-card-subtitle>{{ e.expenseNumber }} · {{ e.employeeName }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <dl class="field-list">
+        <dt>Status</dt>
+        <dd><app-status-badge [status]="e.status" /></dd>
+        <dt>Amount</dt>
+        <dd class="amount">{{ e.amount | currency: 'INR' : 'symbol' : '1.2-2' : 'en-IN' }}</dd>
+        <dt>Category</dt>
+        <dd>{{ e.categoryName }}</dd>
+        <dt>Expense date</dt>
+        <dd>{{ e.expenseDate | date: 'mediumDate' }}</dd>
+        <dt>Merchant</dt>
+        <dd>{{ e.merchantName || '—' }}</dd>
+        <dt>Payment method</dt>
+        <dd>{{ paymentLabel(e.paymentMethod) }}</dd>
+        <dt>Submitted</dt>
+        <dd>{{ e.submittedAt ? (e.submittedAt | date: 'medium') : 'Not yet submitted' }}</dd>
+        <dt>Reviewer</dt>
+        <dd>{{ e.assignedManagerName || '—' }}</dd>
+        <dt>Description</dt>
+        <dd class="pre-line">{{ e.description || '—' }}</dd>
+      </dl>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="detail-side">
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>Receipts</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @for (a of e.attachments; track a.attachmentId) {
+          <div class="receipt-row">
+            <mat-icon>{{ a.contentType === 'application/pdf' ? 'picture_as_pdf' : 'image' }}</mat-icon>
+            <div class="receipt-row__name">
+              <span>{{ a.fileName }}</span>
+              <small class="muted">{{ a.fileSizeBytes / 1024 | number: '1.0-0' }} KB</small>
+            </div>
+            <button mat-icon-button matTooltip="View" (click)="openReceipt(a)">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            @if (allowDeleteReceipts()) {
+              <button mat-icon-button matTooltip="Remove" (click)="deleteReceipt.emit(a)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+          </div>
+        } @empty {
+          <p class="muted">No receipts attached.</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>Approval history</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <ol class="timeline">
+          @for (t of timeline(); track $index) {
+            <li class="timeline__item">
+              <span class="timeline__dot" [class.timeline__dot--ok]="t.tone === 'ok'"
+                    [class.timeline__dot--bad]="t.tone === 'bad'"></span>
+              <div>
+                <strong>{{ t.label }}</strong> by {{ t.by }}
+                <div class="muted">{{ t.at | date: 'medium' }}</div>
+                @if (t.comments) {
+                  <div class="timeline__comment">“{{ t.comments }}”</div>
+                }
+              </div>
+            </li>
+          } @empty {
+            <li class="muted">No activity yet.</li>
+          }
+        </ol>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -9,5 +9,9 @@ frontend/.angular/
 frontend/dist/
 # Runtime + secrets
 backend/ExpenseReimbursement.API/storage/
+backend/ExpenseReimbursement.API/expenso.db*
 .env
 *.local.json
+
+# Angular build cache
+.angular/
