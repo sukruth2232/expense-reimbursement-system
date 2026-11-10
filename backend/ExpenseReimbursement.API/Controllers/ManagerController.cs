@@ -17,6 +17,11 @@ namespace ExpenseReimbursement.API.Controllers;
 [Authorize(Roles = "Manager")]
 public class ManagerController(IApprovalService approvals) : ControllerBase
 {
+    /// <summary>Active employees reporting directly to this manager.</summary>
+    [HttpGet("team-members")]
+    public async Task<ActionResult<IReadOnlyList<TeamMemberDto>>> TeamMembers(CancellationToken ct) =>
+        Ok(await approvals.GetTeamMembersAsync(User.GetUserId(), ct));
+
     /// <summary>Claims waiting for my decision, oldest first.</summary>
     [HttpGet("pending")]
     public async Task<ActionResult<PagedResult<ExpenseSummaryDto>>> Pending([FromQuery] PageQuery query, CancellationToken ct) =>

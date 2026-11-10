@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ExpenseReimbursement.Infrastructure.Data;
 
 /// <summary>
-/// The EF Core "unit of work". Each DbSet is one PostgreSQL table.
+/// The EF Core "unit of work". Each DbSet is one SQLite table.
 /// Table design (keys, lengths, indexes, check constraints) is NOT written here:
 /// each entity has its own IEntityTypeConfiguration class in Data/Configurations,
 /// and ApplyConfigurationsFromAssembly picks them all up.
@@ -19,9 +19,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Generates readable expense numbers: EXP-000001, EXP-000002, ...
-        modelBuilder.HasSequence<long>("expense_number_seq").StartsAt(1);
-
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 }

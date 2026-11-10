@@ -21,7 +21,7 @@ public class ExpenseAttachmentConfiguration : IEntityTypeConfiguration<ExpenseAt
         b.Property(a => a.FileName).HasMaxLength(255).IsRequired();
         b.Property(a => a.FilePath).HasMaxLength(500).IsRequired();
         b.Property(a => a.ContentType).HasMaxLength(100).IsRequired();
-        b.Property(a => a.UploadedAt).HasDefaultValueSql("now()");
+        b.Property(a => a.UploadedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
         b.HasIndex(a => a.FilePath).IsUnique();
 
         // Cascade: a receipt row has no meaning without its expense.

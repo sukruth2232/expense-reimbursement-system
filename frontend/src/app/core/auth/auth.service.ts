@@ -63,7 +63,7 @@ export class AuthService {
 
   /** Where each role lands after login. */
   homeRoute(): string {
-    return this.role() === 'Manager' ? '/manager/dashboard' : '/employee/dashboard';
+    return this.role() === 'Manager' ? '/manager/dashboard' : '/login';
   }
 
   private readUser(): CurrentUser | null {

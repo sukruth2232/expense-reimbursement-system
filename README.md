@@ -1,92 +1,37 @@
-# Expenso – Expense Reimbursement & Approval System
+﻿# Expenso Manager Module
 
-Employees submit business expenses with receipts; their manager approves or rejects them with comments; every decision is recorded in an audit history.
+Expenso is split into manager and employee experiences. This project checkout contains the **manager module and shared infrastructure**; the employee-facing Angular screens have been removed so the manager work can be developed independently. Shared expense, user, category, attachment, and approval records and APIs remain available for the employee module integration.
 
-**Stack:** Angular 22 + Angular Material · ASP.NET Core 10 Web API · EF Core 10 · PostgreSQL
+**Stack:** Angular 22 + Angular Material · ASP.NET Core 10 Web API · EF Core 10 · SQLite
 
-| Folder | What it is |
+| Folder | Contents |
 | --- | --- |
-| `backend/` | .NET solution: `ExpenseReimbursement.API`, `.Core`, `.Infrastructure` |
-| `frontend/` | Angular app (`expenso-web`) |
-| `database/` | Reference SQL for the schema (the real schema is created by EF Core migrations) |
-| `documentation/` | `IMPLEMENTATION_GUIDE.md` – how everything works, for reviews and demos |
+| `frontend/` | Manager dashboard, pending approvals, team expenses, decision history, login, profile, and shared UI |
+| `backend/` | API, shared domain model, manager approval workflows, and SQLite persistence |
+| `database/` | Reference schema |
+| `documentation/` | Implementation guide |
 
----
+## Run locally (Windows PowerShell)
 
-## Run it locally (Windows, PowerShell)
-
-**Quick start:** from the repo root run
+Requirements: .NET 10 SDK and Node.js 22 or newer. No PostgreSQL server is needed.
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\run-dev.ps1
 ```
 
-It checks prerequisites, sets up secrets (asks for your PostgreSQL password once), creates the first migration, installs packages and opens the API and Angular in two windows. The manual steps below do the same thing.
+The script builds the backend, installs frontend packages if needed, and starts both applications. It creates a JWT signing key and seeds the manager and seven team accounts. SQLite creates `backend/ExpenseReimbursement.API/expenso.db` automatically.
 
-### Prerequisites (once per machine)
-
-- .NET 10 SDK, Node.js 22+ (24 LTS recommended), PostgreSQL 16+ running on `localhost:5432`
-- EF Core CLI: `dotnet tool install --global dotnet-ef --version "10.*"`
-
-### 1. Secrets (once per machine)
+To set up the demo password manually:
 
 ```powershell
-cd backend
-powershell -ExecutionPolicy Bypass -File .\setup-dev-secrets.ps1
+powershell -ExecutionPolicy Bypass -File .\backend\setup-dev-secrets.ps1
 ```
 
-It asks for your PostgreSQL password (user `postgres`) and stores the connection string, a random JWT signing key and the demo password in **user-secrets** (outside the repo).
+Manager login: `ramchinta@gmail.com` / `Password@123`.
 
-### 2. Database migration (only if `ExpenseReimbursement.Infrastructure/Data/Migrations` does not exist yet)
+Team logins use each member's name as their Gmail address (for example, `sukruth@gmail.com`) and the same `Password@123` password.
 
-```powershell
-cd backend
-dotnet ef migrations add InitialCreate -p ExpenseReimbursement.Infrastructure -s ExpenseReimbursement.API -o Data/Migrations
-```
+- Manager app: http://localhost:4200
+- API and Swagger: http://localhost:5180/swagger
 
-You do **not** need to run `dotnet ef database update`: in Development the API applies migrations and seeds demo users on start-up. The database `expenso_dev` is created automatically.
-
-### 3. Start the API (terminal 1)
-
-```powershell
-cd backend
-dotnet run --project ExpenseReimbursement.API --launch-profile http
-```
-
-Swagger UI: http://localhost:5180/swagger
-
-### 4. Start Angular (terminal 2)
-
-```powershell
-cd frontend
-npm install
-npm start
-```
-
-App: http://localhost:4200 — calls to `/api/*` are proxied to the API (`proxy.conf.json`).
-
-### Demo logins
-
-| Role | Email | Password |
-| --- | --- | --- |
-| Manager | `manager@expenso.local` (Rahul Verma) | `Expenso@123` |
-| Employee | `employee1@expenso.local` (Ananya Reddy) | `Expenso@123` |
-| Employee | `employee2@expenso.local` (Karthik Rao) | `Expenso@123` |
-| Employee | `employee3@expenso.local` (Sneha Iyer) | `Expenso@123` |
-
-(The password is whatever you gave `setup-dev-secrets.ps1`; `Expenso@123` is its default.)
-
-### 5-minute demo script
-
-1. Log in as **employee1** → Dashboard → **New expense**.
-2. Fill the form, attach a JPG/PNG/PDF receipt → **Save & submit**. Status becomes *Pending approval*.
-3. Log out, log in as **manager** → **Pending approvals** → open the claim → view the receipt.
-4. **Reject** with a reason. Log back in as employee1: the reason is shown; **Edit** → fix → **Resubmit**.
-5. As manager, **Approve**. Check **My decisions** and the claim's approval timeline.
-6. Security check in Swagger: log in as employee2 and call `GET /api/expenses/{id}` for employee1's claim → **404**.
-
----
-
-## Branches
-
-`main` (demo-ready) ← `develop` (integration) ← `feature/*`. Every change goes through a pull request reviewed by the other member.
+The SQLite database is a local development database. The employee submission endpoints remain in the API so employee-module work can integrate and populate the manager approval queues.

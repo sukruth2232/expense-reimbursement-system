@@ -19,6 +19,7 @@ import { PageHeader } from '../../../shared/components/page-header';
     PageHeader, ExpenseTable, EmptyState],
   template: `
     <app-page-header [title]="'Welcome, ' + (user()?.fullName ?? '')" subtitle="Your team's claims at a glance">
+      <a mat-stroked-button routerLink="/manager/my-team"><mat-icon>people</mat-icon>My team</a>
       <a mat-flat-button routerLink="/manager/pending"><mat-icon>pending_actions</mat-icon>Review pending</a>
     </app-page-header>
 

@@ -19,17 +19,17 @@ builder.Services
     .AddJwtAuthentication(builder.Configuration)       // who is calling?
     .AddAngularCors(builder.Configuration)
     .AddApiDocumentation()                             // OpenAPI + Swagger UI
-    .AddInfrastructure(builder.Configuration);         // EF Core, services, storage, JWT signing
+    .AddInfrastructure(builder.Configuration, builder.Environment.ContentRootPath); // EF Core, services, storage, JWT signing
 
 var app = builder.Build();
 
 // ---- 2. Development-only start-up tasks ------------------------------------
 if (app.Environment.IsDevelopment())
 {
-    // Apply any pending EF Core migrations, then create the demo users.
+    // Create the local SQLite schema if needed, then create the demo users.
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await db.Database.MigrateAsync();
+    await db.Database.EnsureCreatedAsync();
     await DbSeeder.SeedAsync(
         db,
         scope.ServiceProvider.GetRequiredService<IPasswordService>(),

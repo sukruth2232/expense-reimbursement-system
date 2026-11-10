@@ -56,22 +56,14 @@ export class Shell {
       .toUpperCase(),
   );
 
-  readonly navItems = computed<NavItem[]>(() =>
-    this.auth.role() === 'Manager'
-      ? [
-          { label: 'Dashboard', icon: 'dashboard', link: '/manager/dashboard' },
-          { label: 'Pending approvals', icon: 'pending_actions', link: '/manager/pending' },
-          { label: 'Team expenses', icon: 'groups', link: '/manager/team' },
-          { label: 'My decisions', icon: 'history', link: '/manager/history' },
-          { label: 'Profile', icon: 'person', link: '/profile' },
-        ]
-      : [
-          { label: 'Dashboard', icon: 'dashboard', link: '/employee/dashboard' },
-          { label: 'New expense', icon: 'add_circle', link: '/employee/expenses/new' },
-          { label: 'My expenses', icon: 'receipt_long', link: '/employee/expenses' },
-          { label: 'Profile', icon: 'person', link: '/profile' },
-        ],
-  );
+  readonly navItems = computed<NavItem[]>(() => [
+    { label: 'Dashboard', icon: 'dashboard', link: '/manager/dashboard' },
+    { label: 'Pending approvals', icon: 'pending_actions', link: '/manager/pending' },
+    { label: 'My team', icon: 'people', link: '/manager/my-team' },
+    { label: 'Team expenses', icon: 'groups', link: '/manager/team' },
+    { label: 'My decisions', icon: 'history', link: '/manager/history' },
+    { label: 'Profile', icon: 'person', link: '/profile' },
+  ]);
 
   logout(): void {
     this.auth.logout();

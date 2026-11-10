@@ -1,6 +1,6 @@
 namespace ExpenseReimbursement.Core.Enums;
 
-// All enums are stored in PostgreSQL as text ("PendingApproval", not 1),
+// All enums are stored as text ("PendingApproval", not 1),
 // so the database stays readable in pgAdmin and safe if enum order changes.
 
 /// <summary>The two roles in the MVP. Stored in Users.Role.</summary>

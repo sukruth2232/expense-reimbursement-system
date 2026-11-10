@@ -19,6 +19,13 @@ namespace ExpenseReimbursement.Infrastructure.Services;
 /// </summary>
 public class ApprovalService(AppDbContext db, IExpenseService expenses, TimeProvider clock) : IApprovalService
 {
+    public async Task<IReadOnlyList<TeamMemberDto>> GetTeamMembersAsync(int managerId, CancellationToken ct) =>
+        await db.Users.AsNoTracking()
+            .Where(u => u.ManagerId == managerId && u.IsActive && u.Role == UserRole.Employee)
+            .OrderBy(u => u.FullName.ToLower())
+            .Select(u => new TeamMemberDto(u.UserId, u.FullName))
+            .ToListAsync(ct);
+
     public async Task<PagedResult<ExpenseSummaryDto>> GetPendingAsync(int managerId, PageQuery query, CancellationToken ct)
     {
         var pending = db.Expenses.AsNoTracking()

@@ -16,6 +16,10 @@ export const MANAGER_ROUTES: Routes = [
     loadComponent: () => import('./team-expenses/team-expenses').then((m) => m.TeamExpenses),
   },
   {
+    path: 'my-team',
+    loadComponent: () => import('./my-team/my-team').then((m) => m.MyTeam),
+  },
+  {
     path: 'history',
     loadComponent: () => import('./approval-history/approval-history').then((m) => m.ApprovalHistory),
   },

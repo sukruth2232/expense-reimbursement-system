@@ -8,6 +8,7 @@ import {
   ExpenseSummary,
   ManagerDashboard,
   PagedResult,
+  TeamMember,
 } from '../models/models';
 
 /** Every manager-side API call in one place (Member 2's module). */
@@ -15,6 +16,10 @@ import {
 export class ApprovalService {
   private readonly http = inject(HttpClient);
   private readonly base = '/api/manager';
+
+  getTeamMembers(): Observable<TeamMember[]> {
+    return this.http.get<TeamMember[]>(`${this.base}/team-members`);
+  }
 
   getPending(page: number, pageSize: number): Observable<PagedResult<ExpenseSummary>> {
     const params = new HttpParams().set('page', page).set('pageSize', pageSize);

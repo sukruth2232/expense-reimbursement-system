@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ExpenseReimbursement.API.Controllers;
 
 /// <summary>
-/// Employee expense endpoints (Member 1's module).
+/// Expense endpoints shared by the employee submission flow and manager review flow.
 /// The class needs a logged-in user; each action then states which role may call it.
 /// (Role attributes on a class and a method are combined with AND, so the role is set per
 /// action: employees create and edit, while employees AND managers may read.)

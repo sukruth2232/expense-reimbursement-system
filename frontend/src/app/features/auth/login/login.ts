@@ -38,13 +38,20 @@ export class Login {
 
     this.loading.set(true);
     this.auth.login(this.form.getRawValue()).subscribe({
-      next: () => this.router.navigateByUrl(this.auth.homeRoute()),
+      next: (response) => {
+        if (response.user.role !== 'Manager') {
+          this.auth.logout();
+          this.loading.set(false);
+          return;
+        }
+        this.router.navigateByUrl(this.auth.homeRoute());
+      },
       error: () => this.loading.set(false),
     });
   }
 
   /** Demo helper: fills the form with a seeded account. */
   useDemo(email: string): void {
-    this.form.patchValue({ email, password: 'Expenso@123' });
+    this.form.patchValue({ email, password: 'Password@123' });
   }
 }

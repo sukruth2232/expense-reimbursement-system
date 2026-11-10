@@ -13,11 +13,11 @@ public class DashboardService(AppDbContext db, TimeProvider clock) : IDashboardS
     {
         var mine = db.Expenses.AsNoTracking().Where(e => e.EmployeeId == employeeId);
 
-        // One GROUP BY query gives count and total per status.
-        var byStatus = await mine
-            .GroupBy(e => e.Status)
-            .Select(g => new { Status = g.Key, Count = g.Count(), Total = g.Sum(e => e.Amount) })
-            .ToListAsync(ct);
+        // SQLite cannot aggregate decimal values in SQL, so aggregate the selected rows in C#.
+        var statusAmounts = await mine.Select(e => new { e.Status, e.Amount }).ToListAsync(ct);
+        var byStatus = statusAmounts.GroupBy(x => x.Status)
+            .Select(g => new { Status = g.Key, Count = g.Count(), Total = g.Sum(x => x.Amount) })
+            .ToList();
 
         int Count(ExpenseStatus s) => byStatus.FirstOrDefault(x => x.Status == s)?.Count ?? 0;
         decimal Total(ExpenseStatus s) => byStatus.FirstOrDefault(x => x.Status == s)?.Total ?? 0m;
@@ -49,7 +49,8 @@ public class DashboardService(AppDbContext db, TimeProvider clock) : IDashboardS
             .Where(e => e.AssignedManagerId == managerId && e.Status == ExpenseStatus.PendingApproval);
 
         var pendingCount = await pending.CountAsync(ct);
-        var pendingAmount = await pending.SumAsync(e => (decimal?)e.Amount, ct) ?? 0m;
+        var pendingAmounts = await pending.Select(e => e.Amount).ToListAsync(ct);
+        var pendingAmount = pendingAmounts.Sum();
 
         var decisionsThisMonth = db.ApprovalHistory.AsNoTracking()
             .Where(h => h.ApproverId == managerId && h.ActionDate >= monthStart);

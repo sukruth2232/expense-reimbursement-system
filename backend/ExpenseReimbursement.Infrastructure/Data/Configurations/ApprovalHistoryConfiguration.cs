@@ -14,13 +14,13 @@ public class ApprovalHistoryConfiguration : IEntityTypeConfiguration<ApprovalHis
             t.HasCheckConstraint("CK_ApprovalHistory_Action", "\"Action\" IN ('Approved', 'Rejected')");
             // A rejection without a reason cannot even be stored.
             t.HasCheckConstraint("CK_ApprovalHistory_RejectReason",
-                "\"Action\" <> 'Rejected' OR length(btrim(coalesce(\"Comments\", ''))) > 0");
+                "\"Action\" <> 'Rejected' OR length(trim(coalesce(\"Comments\", ''))) > 0");
         });
 
         b.HasKey(h => h.ApprovalId);
         b.Property(h => h.Action).HasConversion<string>().HasMaxLength(20).IsRequired();
         b.Property(h => h.Comments).HasMaxLength(1000);
-        b.Property(h => h.ActionDate).HasDefaultValueSql("now()");
+        b.Property(h => h.ActionDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
         // Restrict: an expense that has audit history can never be deleted.
         b.HasOne(h => h.Expense)

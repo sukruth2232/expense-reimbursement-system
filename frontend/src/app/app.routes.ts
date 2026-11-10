@@ -8,7 +8,7 @@ import { Shell } from './layout/shell/shell';
  * Top-level routes.
  * - /login is public (guestGuard sends logged-in users to their dashboard).
  * - Everything else sits inside the Shell (sidebar + toolbar) and needs a login.
- * - /employee/** and /manager/** are lazy-loaded and limited by role.
+ * - /manager/** is lazy-loaded and limited to managers.
  */
 export const routes: Routes = [
   {
@@ -21,12 +21,6 @@ export const routes: Routes = [
     component: Shell,
     canActivate: [authGuard],
     children: [
-      {
-        path: 'employee',
-        canActivate: [roleGuard],
-        data: { roles: ['Employee'] },
-        loadChildren: () => import('./features/employee/employee.routes').then((m) => m.EMPLOYEE_ROUTES),
-      },
       {
         path: 'manager',
         canActivate: [roleGuard],

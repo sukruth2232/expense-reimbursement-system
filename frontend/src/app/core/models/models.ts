@@ -119,6 +119,11 @@ export interface PagedResult<T> {
 }
 
 // ---- Manager ----------------------------------------------------------------
+export interface TeamMember {
+  userId: number;
+  fullName: string;
+}
+
 export interface ApprovalHistoryItem {
   approvalId: number;
   expenseId: number;

@@ -7,13 +7,13 @@ using Microsoft.Extensions.Logging;
 namespace ExpenseReimbursement.Infrastructure.Data;
 
 /// <summary>
-/// Creates the demo users (Development only): 1 manager and 3 employees reporting to them.
+/// Creates the manager demo account and their seven employee accounts in Development.
 ///
 /// Why not HasData like the categories? HasData values are baked into the migration file,
 /// and a password hash in a migration would be committed to Git. Here the password comes
 /// from configuration (user-secrets) and is hashed at runtime.
 ///
-/// Idempotent: it only inserts users that don't exist yet, so running it on every start is safe.
+/// Idempotent: it upserts the known accounts, including renaming the previous demo users.
 /// </summary>
 public static class DbSeeder
 {
@@ -25,34 +25,46 @@ public static class DbSeeder
             return;
         }
 
-        var manager = await EnsureUserAsync(db, passwords, "Rahul Verma", "manager@expenso.local",
-            UserRole.Manager, managerId: null, defaultPassword);
+        var manager = await EnsureUserAsync(db, passwords, "Ram chinta", "ramchinta@gmail.com",
+            UserRole.Manager, managerId: null, defaultPassword,
+            legacyEmails: ["manager@gmail.com", "manager@expenso.local"]);
 
-        await EnsureUserAsync(db, passwords, "Ananya Reddy", "employee1@expenso.local", UserRole.Employee, manager.UserId, defaultPassword);
-        await EnsureUserAsync(db, passwords, "Karthik Rao", "employee2@expenso.local", UserRole.Employee, manager.UserId, defaultPassword);
-        await EnsureUserAsync(db, passwords, "Sneha Iyer", "employee3@expenso.local", UserRole.Employee, manager.UserId, defaultPassword);
+        (string Name, string Email, string[] LegacyEmails)[] team =
+        [
+            ("Sukruth", "sukruth@gmail.com", ["employee1@expenso.local"]),
+            ("Manikanta", "manikanta@gmail.com", ["employee2@expenso.local"]),
+            ("Yashwanth", "yashwanth@gmail.com", ["employee3@expenso.local"]),
+            ("Dawood", "dawood@gmail.com", []),
+            ("Satwik", "satwik@gmail.com", []),
+            ("jaynith", "jaynith@gmail.com", []),
+            ("Charan", "charan@gmail.com", [])
+        ];
 
-        logger.LogInformation("Demo users are ready (manager@expenso.local, employee1-3@expenso.local).");
+        foreach (var member in team)
+            await EnsureUserAsync(db, passwords, member.Name, member.Email, UserRole.Employee,
+                manager.UserId, defaultPassword, member.LegacyEmails);
+
+        logger.LogInformation("Manager and seven team accounts are ready (ramchinta@gmail.com).");
     }
 
     private static async Task<User> EnsureUserAsync(AppDbContext db, IPasswordService passwords,
-        string fullName, string email, UserRole role, int? managerId, string password)
+        string fullName, string email, UserRole role, int? managerId, string password,
+        string[]? legacyEmails = null)
     {
-        var existing = await db.Users.FirstOrDefaultAsync(u => u.Email == email);
-        if (existing is not null) return existing;
-
-        var user = new User
+        var candidateEmails = new[] { email }.Concat(legacyEmails ?? []);
+        var user = await db.Users.FirstOrDefaultAsync(u => candidateEmails.Contains(u.Email));
+        if (user is null)
         {
-            FullName = fullName,
-            Email = email,
-            Role = role,
-            ManagerId = managerId,
-            IsActive = true,
-            CreatedAt = DateTime.UtcNow
-        };
-        user.PasswordHash = passwords.Hash(user, password);
+            user = new User { CreatedAt = DateTime.UtcNow };
+            db.Users.Add(user);
+        }
 
-        db.Users.Add(user);
+        user.FullName = fullName;
+        user.Email = email;
+        user.Role = role;
+        user.ManagerId = managerId;
+        user.IsActive = true;
+        user.PasswordHash = passwords.Hash(user, password);
         await db.SaveChangesAsync();
         return user;
     }

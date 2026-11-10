@@ -53,6 +53,7 @@ public interface IExpenseService
 /// <summary>Manager side: review queue, decisions and history.</summary>
 public interface IApprovalService
 {
+    Task<IReadOnlyList<TeamMemberDto>> GetTeamMembersAsync(int managerId, CancellationToken ct);
     Task<PagedResult<ExpenseSummaryDto>> GetPendingAsync(int managerId, PageQuery query, CancellationToken ct);
     Task<PagedResult<ExpenseSummaryDto>> GetTeamExpensesAsync(int managerId, ExpenseListQuery query, CancellationToken ct);
     Task<ExpenseDetailDto> ApproveAsync(int managerId, int expenseId, ApproveExpenseRequest request, CancellationToken ct);

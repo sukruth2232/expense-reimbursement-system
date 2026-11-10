@@ -1,14 +1,14 @@
-<div class="login">
+﻿<div class="login">
   <section class="login__brand">
     <mat-icon class="login__logo">account_balance_wallet</mat-icon>
     <h1>Expenso</h1>
-    <p>Submit expenses, attach receipts and get approvals — without email threads or spreadsheets.</p>
+    <p>Submit expenses, attach receipts and get approvals â€” without email threads or spreadsheets.</p>
   </section>
 
   <section class="login__panel">
     <form class="login__form" [formGroup]="form" (ngSubmit)="submit()">
       <h2>Sign in</h2>
-      <p class="muted">Use your work email and password.</p>
+      <p class="muted">Sign in with your manager account.</p>
 
       <mat-form-field appearance="outline">
         <mat-label>Email</mat-label>
@@ -43,9 +43,10 @@
 
       <div class="demo-accounts">
         <span class="muted">Demo accounts:</span>
-        <button mat-stroked-button type="button" (click)="useDemo('employee1@expenso.local')">Employee</button>
-        <button mat-stroked-button type="button" (click)="useDemo('manager@expenso.local')">Manager</button>
+        <button mat-stroked-button type="button" (click)="useDemo('ramchinta@gmail.com')">Manager</button>
       </div>
     </form>
   </section>
 </div>
+
+

@@ -16,10 +16,9 @@ public class Expense
     public int ExpenseId { get; set; }
 
     /// <summary>
-    /// Human-friendly number such as EXP-000014. Left null in C#; PostgreSQL fills it from a
-    /// sequence on INSERT and EF Core reads the value back.
+    /// Human-friendly number such as EXP-000014, assigned after the SQLite identity is generated.
     /// </summary>
-    public string ExpenseNumber { get; private set; } = null!;
+    public string ExpenseNumber { get; set; } = null!;
 
     public int EmployeeId { get; set; }
     public User Employee { get; set; } = null!;
@@ -39,7 +38,7 @@ public class Expense
     public string? MerchantName { get; set; }
     public PaymentMethod PaymentMethod { get; set; }
 
-    /// <summary>Money is always decimal in C# and numeric(12,2) in PostgreSQL - never float.</summary>
+    /// <summary>Money is always decimal in C# and stored as decimal in SQLite - never float.</summary>
     public decimal Amount { get; set; }
 
     public DateOnly ExpenseDate { get; set; }
@@ -52,11 +51,9 @@ public class Expense
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
-    /// Optimistic concurrency token mapped to PostgreSQL's hidden "xmin" column.
-    /// If two managers click Approve at the same moment, the second save fails
-    /// instead of silently overwriting the first.
+    /// SQLite has no built-in row version column; workflow status checks protect decisions.
     /// </summary>
-    public uint RowVersion { get; set; }
+    public void AssignExpenseNumber() => ExpenseNumber = $"EXP-{ExpenseId:D6}";
 
     public ICollection<ExpenseAttachment> Attachments { get; set; } = new List<ExpenseAttachment>();
     public ICollection<ApprovalHistory> History { get; set; } = new List<ApprovalHistory>();

@@ -23,11 +23,9 @@ public class ExpenseConfiguration : IEntityTypeConfiguration<Expense>
 
         b.HasKey(e => e.ExpenseId);
 
-        // Filled by PostgreSQL on insert using the sequence declared in AppDbContext.
         b.Property(e => e.ExpenseNumber)
             .HasMaxLength(20)
-            .HasDefaultValueSql("'EXP-' || lpad(nextval('expense_number_seq')::text, 6, '0')")
-            .ValueGeneratedOnAdd();
+            .IsRequired();
         b.HasIndex(e => e.ExpenseNumber).IsUnique();
 
         b.Property(e => e.Title).HasMaxLength(150).IsRequired();
@@ -36,13 +34,10 @@ public class ExpenseConfiguration : IEntityTypeConfiguration<Expense>
         b.Property(e => e.PaymentMethod).HasConversion<string>().HasMaxLength(20).IsRequired();
         b.Property(e => e.Amount).HasPrecision(12, 2);          // numeric(12,2)
         b.Property(e => e.ExpenseDate).HasColumnType("date");
-        b.Property(e => e.Status).HasConversion<string>().HasMaxLength(20).IsRequired();
-        b.Property(e => e.CreatedAt).HasDefaultValueSql("now()");
-        b.Property(e => e.UpdatedAt).HasDefaultValueSql("now()");
-
-        // Npgsql maps a uint marked IsRowVersion() to PostgreSQL's built-in xmin column.
-        // No extra column is created; EF adds "WHERE xmin = @old" to every UPDATE.
-        b.Property(e => e.RowVersion).IsRowVersion();
+        // A status transition is the optimistic concurrency guard for competing manager decisions.
+        b.Property(e => e.Status).HasConversion<string>().HasMaxLength(20).IsRequired().IsConcurrencyToken();
+        b.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+        b.Property(e => e.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
         // Relationships (all Restrict: history and money records are never cascade-deleted).
         b.HasOne(e => e.Employee).WithMany()

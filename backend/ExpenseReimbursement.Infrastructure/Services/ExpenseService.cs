@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 namespace ExpenseReimbursement.Infrastructure.Services;
 
 /// <summary>
-/// Employee-side business logic (Member 1's module).
+/// Shared expense access and employee-side business logic used by both app modules.
 ///
 /// Ownership rule used everywhere below: an expense is loaded with
 /// "WHERE ExpenseId = @id AND EmployeeId = @callerId". If it belongs to someone else the
@@ -33,12 +33,15 @@ public class ExpenseService(
         var expense = new Expense
         {
             EmployeeId = employeeId,   // from the JWT, never from the request body
+            ExpenseNumber = $"NEW-{Guid.NewGuid():N}", // temporary unique value until SQLite assigns the ID
             CreatedAt = now,
             UpdatedAt = now
         };
         ApplyRequest(expense, request);
 
         db.Expenses.Add(expense);
+        await db.SaveChangesAsync(ct);
+        expense.AssignExpenseNumber();
         await db.SaveChangesAsync(ct);
 
         return await GetByIdAsync(employeeId, expense.ExpenseId, ct);

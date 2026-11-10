@@ -21,7 +21,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         b.Property(u => u.Email).HasMaxLength(256).IsRequired();
         b.Property(u => u.PasswordHash).IsRequired();
         b.Property(u => u.Role).HasConversion<string>().HasMaxLength(20).IsRequired();
-        b.Property(u => u.CreatedAt).HasDefaultValueSql("now()");
+        b.Property(u => u.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
         // Login looks users up by email, and two users can never share one.
         b.HasIndex(u => u.Email).IsUnique();

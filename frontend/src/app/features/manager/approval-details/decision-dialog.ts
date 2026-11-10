@@ -18,7 +18,7 @@ export interface DecisionDialogResult {
 
 /**
  * Approve (optional comment) or Reject (reason REQUIRED, 5-1000 characters).
- * The same rule is enforced by RejectExpenseRequest in C# and by a CHECK constraint in PostgreSQL.
+ * The same rule is enforced by RejectExpenseRequest in C# and by a SQLite CHECK constraint.
  */
 @Component({
   selector: 'app-decision-dialog',

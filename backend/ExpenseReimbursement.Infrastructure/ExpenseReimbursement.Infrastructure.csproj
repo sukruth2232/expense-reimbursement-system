@@ -2,7 +2,7 @@
 
   <!--
     Infrastructure = everything that talks to the outside world:
-    PostgreSQL (EF Core + Npgsql), the file system (receipts) and JWT signing.
+    SQLite (EF Core), the file system (receipts) and JWT signing.
     It implements the interfaces declared in Core.
   -->
   <PropertyGroup>
@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <!-- "10.*" = latest 10.x patch; never jumps to 11. -->
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.*" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.*" />
   </ItemGroup>
 
