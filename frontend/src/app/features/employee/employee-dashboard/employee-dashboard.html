@@ -1,0 +1,45 @@
+<app-page-header [title]="'Welcome, ' + (user()?.fullName ?? '')" subtitle="Your expense claims at a glance">
+  <a mat-flat-button routerLink="/employee/expenses/new"><mat-icon>add</mat-icon>New expense</a>
+</app-page-header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+@if (data(); as d) {
+  <div class="stat-grid">
+    <mat-card appearance="outlined" class="stat stat--draft">
+      <span class="stat__label">Drafts</span>
+      <span class="stat__value">{{ d.draftCount }}</span>
+    </mat-card>
+    <mat-card appearance="outlined" class="stat stat--pending">
+      <span class="stat__label">Pending approval</span>
+      <span class="stat__value">{{ d.pendingCount }}</span>
+      <span class="stat__sub">{{ d.pendingAmount | currency: 'INR' : 'symbol' : '1.0-0' : 'en-IN' }}</span>
+    </mat-card>
+    <mat-card appearance="outlined" class="stat stat--approved">
+      <span class="stat__label">Approved</span>
+      <span class="stat__value">{{ d.approvedCount }}</span>
+      <span class="stat__sub">{{ d.approvedAmount | currency: 'INR' : 'symbol' : '1.0-0' : 'en-IN' }}</span>
+    </mat-card>
+    <mat-card appearance="outlined" class="stat stat--rejected">
+      <span class="stat__label">Rejected</span>
+      <span class="stat__value">{{ d.rejectedCount }}</span>
+    </mat-card>
+  </div>
+
+  <mat-card appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>Recent activity</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (d.recent.length > 0) {
+        <app-expense-table [rows]="d.recent" (rowClick)="open($event)" />
+      } @else {
+        <app-empty-state icon="receipt_long" title="No expenses yet" message="Create your first claim to see it here.">
+          <a mat-stroked-button routerLink="/employee/expenses/new">New expense</a>
+        </app-empty-state>
+      }
+    </mat-card-content>
+  </mat-card>
+}

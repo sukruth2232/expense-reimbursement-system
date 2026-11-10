@@ -11,3 +11,6 @@ frontend/dist/
 backend/ExpenseReimbursement.API/storage/
 .env
 *.local.json
+
+# Angular build cache
+.angular/
