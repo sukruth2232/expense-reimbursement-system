@@ -1,6 +1,62 @@
-@ExpenseReimbursement.API_HostAddress = http://localhost:5024
+### Expenso API quick tests (VS Code "REST Client" extension or Visual Studio)
+### 1) Run the Login request, 2) copy accessToken into @token below, 3) run the others.
 
-GET {{ExpenseReimbursement.API_HostAddress}}/weatherforecast/
-Accept: application/json
+@api = http://localhost:5180
+@token = paste-access-token-here
 
-###
+### Login as an employee
+POST {{api}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "employee1@expenso.local", "password": "Expenso@123" }
+
+### Login as the manager
+POST {{api}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "manager@expenso.local", "password": "Expenso@123" }
+
+### Who am I?
+GET {{api}}/api/auth/me
+Authorization: Bearer {{token}}
+
+### Categories
+GET {{api}}/api/categories
+Authorization: Bearer {{token}}
+
+### Create a draft expense (employee token)
+POST {{api}}/api/expenses
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Client visit - Pune flights",
+  "categoryId": 1,
+  "expenseDate": "2026-11-05",
+  "amount": 2450.00,
+  "merchantName": "IndiGo",
+  "description": "Return flight",
+  "paymentMethod": "PersonalCard"
+}
+
+### Validation error example: future date + zero amount -> 400
+POST {{api}}/api/expenses
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "title": "Bad", "categoryId": 1, "expenseDate": "2099-01-01", "amount": 0, "paymentMethod": "Cash" }
+
+### My expenses
+GET {{api}}/api/expenses/my?page=1&pageSize=10
+Authorization: Bearer {{token}}
+
+### Manager: pending queue (manager token)
+GET {{api}}/api/manager/pending
+Authorization: Bearer {{token}}
+
+### Manager: reject without a reason -> 400
+POST {{api}}/api/manager/1/reject
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "reason": "" }

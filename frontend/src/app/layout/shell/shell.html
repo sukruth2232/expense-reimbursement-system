@@ -1,0 +1,53 @@
+<mat-sidenav-container class="shell">
+  <mat-sidenav
+    #drawer
+    class="shell__nav"
+    [mode]="isMobile() ? 'over' : 'side'"
+    [opened]="!isMobile()"
+  >
+    <div class="brand">
+      <mat-icon>account_balance_wallet</mat-icon>
+      <span>Expenso</span>
+    </div>
+
+    <mat-nav-list>
+      @for (item of navItems(); track item.link) {
+        <a
+          mat-list-item
+          [routerLink]="item.link"
+          routerLinkActive="nav-active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="isMobile() && drawer.close()"
+        >
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar class="shell__toolbar">
+      @if (isMobile()) {
+        <button mat-icon-button aria-label="Open menu" (click)="drawer.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+      }
+      <span class="spacer"></span>
+      <span class="role-chip">{{ user()?.role }}</span>
+      <button mat-button [matMenuTriggerFor]="userMenu" class="user-button">
+        <span class="avatar">{{ initials() }}</span>
+        <span class="user-name">{{ user()?.fullName }}</span>
+        <mat-icon>expand_more</mat-icon>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <a mat-menu-item routerLink="/profile"><mat-icon>person</mat-icon>Profile</a>
+        <button mat-menu-item (click)="logout()"><mat-icon>logout</mat-icon>Log out</button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <main class="page">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>
