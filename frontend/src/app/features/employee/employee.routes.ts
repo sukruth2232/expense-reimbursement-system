@@ -17,6 +17,21 @@ export const EMPLOYEE_ROUTES: Routes = [
         .then((m) => m.EmployeeDashboard),
   },
   {
+    // Create a new expense.
+    // Keep this before the expense details route.
+    path: 'expenses/new',
+    loadComponent: () =>
+      import('./create-expense/create-expense')
+        .then((m) => m.CreateExpense),
+  },
+  {
+    // Employee Expense Details.
+    path: 'expenses/:id',
+    loadComponent: () =>
+      import('./expense-details/expense-details')
+        .then((m) => m.EmployeeExpenseDetails),
+  },
+  {
     // Employee My Expenses page.
     path: 'expenses',
     loadComponent: () =>
