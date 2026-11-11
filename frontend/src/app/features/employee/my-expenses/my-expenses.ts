@@ -1,23 +1,36 @@
 
 import { Component, inject, signal } from '@angular/core';
+
+// Angular Material modules
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
-import {
-  ExpenseStatus,
-  ExpenseSummary,
-} from '../../../core/models/models';
+// Angular routing
+import { Router, RouterLink } from '@angular/router';
 
+// Models
+import { ExpenseSummary } from '../../../core/models/models';
+
+// Services
 import { ExpenseService } from '../../../core/services/expense.service';
+
+// Shared components
 import { EmptyState } from '../../../shared/components/empty-state';
 import { ExpenseTable } from '../../../shared/components/expense-table';
 import { PageHeader } from '../../../shared/components/page-header';
 
 @Component({
   selector: 'app-my-expenses',
+
+  // Every standalone component or module used in this template
+  // must be registered here.
   imports: [
+    RouterLink,
+    MatButtonModule,
+    MatIconModule,
     MatCardModule,
     MatPaginatorModule,
     MatProgressBarModule,
@@ -25,18 +38,28 @@ import { PageHeader } from '../../../shared/components/page-header';
     ExpenseTable,
     EmptyState,
   ],
+
   template: `
+    <!-- Page heading with Create New Expense button -->
     <app-page-header
       title="My Expenses"
-      subtitle="View and track all your submitted expense claims"
-    />
+      subtitle="View and manage your expenses"
+    >
+      <a mat-flat-button routerLink="/employee/expenses/new">
+        <mat-icon>add</mat-icon>
+        Create New Expense
+      </a>
+    </app-page-header>
 
+    <!-- Expense list card -->
     <mat-card appearance="outlined">
 
+      <!-- Loading indicator -->
       @if (loading()) {
         <mat-progress-bar mode="indeterminate" />
       }
 
+      <!-- Display expenses when records are available -->
       @if (rows().length > 0) {
 
         <app-expense-table
@@ -52,6 +75,7 @@ import { PageHeader } from '../../../shared/components/page-header';
           (rowClick)="open($event)"
         />
 
+        <!-- Pagination -->
         <mat-paginator
           [length]="total()"
           [pageIndex]="page() - 1"
@@ -62,6 +86,7 @@ import { PageHeader } from '../../../shared/components/page-header';
 
       } @else if (!loading()) {
 
+        <!-- Display when there are no expenses -->
         <app-empty-state
           icon="receipt_long"
           title="No expenses found"
@@ -102,14 +127,12 @@ export class MyExpenses {
   }
 
   load(): void {
-
     this.loading.set(true);
 
     // Retrieve expenses belonging to the logged-in employee.
     this.expenses
       .getMyExpenses(this.page(), this.pageSize())
       .subscribe({
-
         next: (result) => {
 
           // Store the expense records.
@@ -122,9 +145,7 @@ export class MyExpenses {
         },
 
         error: (error) => {
-
           console.error('Unable to load employee expenses:', error);
-
           this.loading.set(false);
         },
       });
