@@ -29,7 +29,7 @@ export const roleGuard: CanActivateFn = (route) => {
 /** The login page itself: a logged-in user is sent straight to their dashboard. */
 export const guestGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
-  return auth.isLoggedIn() && auth.role() === 'Manager'
+  return auth.isLoggedIn()
     ? inject(Router).createUrlTree([auth.homeRoute()])
     : true;
 };

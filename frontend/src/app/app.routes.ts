@@ -22,12 +22,19 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       {
-  path: 'employee',
-  canActivate: [roleGuard],
-  data: { roles: ['Employee'] },
-  loadChildren: () =>
-    import('./features/employee/employee.routes').then((m) => m.EMPLOYEE_ROUTES),
-},
+        path: 'employee',
+        canActivate: [roleGuard],
+        data: { roles: ['Employee'] },
+        loadChildren: () =>
+          import('./features/employee/employee.routes').then((m) => m.EMPLOYEE_ROUTES),
+      },
+      {
+        path: 'manager',
+        canActivate: [roleGuard],
+        data: { roles: ['Manager'] },
+        loadChildren: () =>
+          import('./features/manager/manager.routes').then((m) => m.MANAGER_ROUTES),
+      },
       {
         path: 'profile',
         loadComponent: () => import('./features/profile/profile').then((m) => m.Profile),
