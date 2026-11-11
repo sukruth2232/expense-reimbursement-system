@@ -1,3 +1,4 @@
+
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,12 +11,20 @@ import { AuthService } from '../../../core/auth/auth.service';
 
 /**
  * Login screen.
- * Flow: form -> AuthService.login() -> POST /api/auth/login -> token saved -> go to role's dashboard.
- * A wrong password returns 401, which the error interceptor shows as a toast.
+ * Flow:
+ * Form -> AuthService.login() -> POST /api/auth/login
+ * -> token saved -> redirect to the correct role dashboard.
  */
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+  ],
   templateUrl: './login.html',
 })
 export class Login {
@@ -25,6 +34,7 @@ export class Login {
   readonly loading = signal(false);
   readonly hidePassword = signal(true);
 
+  // Creates the login form and validates email and password.
   readonly form = inject(FormBuilder).nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
@@ -37,21 +47,21 @@ export class Login {
     }
 
     this.loading.set(true);
+
     this.auth.login(this.form.getRawValue()).subscribe({
-      next: (response) => {
-        if (response.user.role !== 'Manager') {
-          this.auth.logout();
-          this.loading.set(false);
-          return;
-        }
+      // Both Employee and Manager can now log in.
+      next: () => {
         this.router.navigateByUrl(this.auth.homeRoute());
       },
       error: () => this.loading.set(false),
     });
   }
 
-  /** Demo helper: fills the form with a seeded account. */
+  // Fills the form with a demo account.
   useDemo(email: string): void {
-    this.form.patchValue({ email, password: 'Password@123' });
+    this.form.patchValue({
+      email,
+      password: 'Password@123',
+    });
   }
 }
