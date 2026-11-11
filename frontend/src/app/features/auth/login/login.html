@@ -8,7 +8,7 @@
   <section class="login__panel">
     <form class="login__form" [formGroup]="form" (ngSubmit)="submit()">
       <h2>Sign in</h2>
-      <p class="muted">Sign in with your manager account.</p>
+      <p class="muted">Sign in with your employee or manager account.</p>
 
       <mat-form-field appearance="outline">
         <mat-label>Email</mat-label>
@@ -42,11 +42,17 @@
       </button>
 
       <div class="demo-accounts">
-        <span class="muted">Demo accounts:</span>
-        <button mat-stroked-button type="button" (click)="useDemo('ramchinta@gmail.com')">Manager</button>
-      </div>
-    </form>
-  </section>
+  <span class="muted">Demo accounts:</span>
+
+  <button mat-stroked-button type="button"
+          (click)="useDemo('manikanta@gmail.com')">
+    Employee
+  </button>
+
+  <button mat-stroked-button type="button"
+          (click)="useDemo('ramchinta@gmail.com')">
+    Manager
+  </button>
 </div>
 
 

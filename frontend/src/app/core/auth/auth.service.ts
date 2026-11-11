@@ -62,9 +62,18 @@ export class AuthService {
   }
 
   /** Where each role lands after login. */
-  homeRoute(): string {
-    return this.role() === 'Manager' ? '/manager/dashboard' : '/login';
+   homeRoute(): string {
+    if (this.role() === 'Manager') {
+      return '/manager/dashboard';
+    }
+
+    if (this.role() === 'Employee') {
+      return '/employee/dashboard';
+    }
+
+    return '/login';
   }
+
 
   private readUser(): CurrentUser | null {
     const raw = sessionStorage.getItem(USER_KEY);

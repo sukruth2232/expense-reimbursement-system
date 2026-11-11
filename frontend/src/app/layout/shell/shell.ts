@@ -56,14 +56,41 @@ export class Shell {
       .toUpperCase(),
   );
 
-  readonly navItems = computed<NavItem[]>(() => [
+  
+readonly navItems = computed<NavItem[]>(() => {
+  // Show Employee navigation when an Employee is logged in.
+  
+if (this.user()?.role === 'Employee') {
+  return [
+    {
+      label: 'Dashboard',
+      icon: 'dashboard',
+      link: '/employee/dashboard',
+    },
+    {
+      label: 'My Expenses',
+      icon: 'receipt_long',
+      link: '/employee/expenses',
+    },
+    {
+      label: 'Profile',
+      icon: 'person',
+      link: '/profile',
+    },
+  ];
+}
+
+  // Keep the existing Manager navigation unchanged.
+  return [
     { label: 'Dashboard', icon: 'dashboard', link: '/manager/dashboard' },
     { label: 'Pending approvals', icon: 'pending_actions', link: '/manager/pending' },
     { label: 'My team', icon: 'people', link: '/manager/my-team' },
     { label: 'Team expenses', icon: 'groups', link: '/manager/team' },
     { label: 'My decisions', icon: 'history', link: '/manager/history' },
     { label: 'Profile', icon: 'person', link: '/profile' },
-  ]);
+  ];
+});
+
 
   logout(): void {
     this.auth.logout();
